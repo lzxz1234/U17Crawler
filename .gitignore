@@ -1,0 +1,9 @@
+*.pyc
+
+/.idea/
+
+/build
+
+/dist
+
+*.sqlite

@@ -2,6 +2,7 @@
 
 import urllib
 import re
+import base64
 from pyquery import PyQuery
 
 class Fetcher:
@@ -43,12 +44,12 @@ class Fetcher:
         :param chapterUrl: 章节地址
         :return: 章节内图片地址列表
         '''
-        p = re.compile(r'.+\"src\"\:\"(.*)\.+')
+        p = re.compile(r'\"src\"\:\"([a-zA-Z0-9=]*)\"')
         doc = PyQuery(url = chapterUrl)
         for script in doc('script'):
             script_content = PyQuery(script).html()
             if script_content and script_content.find('image_config') > 0:
-                return p.findall(script_content)
+                return [base64.decodestring(x) for x in p.findall(script_content)]
 
 if __name__=='__main__':
     print Fetcher().queryImages('http://www.u17.com/chapter/334223.html')
