@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
 
+import sys
 
-'''
-http://so.u17.com/all/%E9%82%A3%E5%B9%B4%E9%82%A3/m0_p1.html
-#comiclist > div > div.comiclist > ul > li > div > div.info > h3 > strong > a
+from ui.MainWindow import Ui_MainWindow
+from PyQt4 import QtGui
 
-http://www.u17.com/comic/8752.html
-.chapterlist_box > .cf > li > a
 
-http://www.u17.com/chapter/155550.html
-js: image_config.image_list
-'''
+class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
+    def __init__(self):
+        super(MainWindow, self).__init__()
+        self.setupUi(self)
+
+if __name__ == "__main__":
+    app = QtGui.QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec_())
