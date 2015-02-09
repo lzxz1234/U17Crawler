@@ -24,11 +24,11 @@ class Fetcher:
         :param book_name: 查询名称
         :return: 列表，每一项为名称链接的二元组
         '''
-        url = 'http://so.u17.com/all/%s/m0_p1.html'%urllib.quote(book_name)
+        url = 'http://so.u17.com/all/%s/m0_p1.html'%self.urlencode(book_name)
         doc = PyQuery(url = url)
         result = []
         for comic in doc('#comiclist > div > div.comiclist > ul > li > div > div.info > h3 > strong > a'):
-            result.append((PyQuery(comic).html(), PyQuery(comic).attr("href")))
+            result.append((re.sub(r'</?\w+[^>]*>', '', PyQuery(comic).html()), PyQuery(comic).attr("href")))
         return result
 
     def queryChapters(self, comicUrl):
@@ -50,6 +50,11 @@ class Fetcher:
             script_content = PyQuery(script).html()
             if script_content and script_content.find('image_config') > 0:
                 return [base64.decodestring(x) for x in p.findall(script_content)]
+
+    def urlencode(self, val):
+        if isinstance(val, unicode):
+            return urllib.quote_plus(str(val))
+        return urllib.quote_plus(val)
 
 if __name__=='__main__':
     print Fetcher().queryImages('http://www.u17.com/chapter/334223.html')
