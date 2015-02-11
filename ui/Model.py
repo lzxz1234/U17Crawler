@@ -8,16 +8,12 @@ class ComicProcessModel(QtCore.QAbstractItemModel):
 
     def __init__(self, query_name):
         super(ComicProcessModel, self).__init__()
-        self._query_name = str(query_name)
-        self._headers = [u'序号', u'书名']
-        self._root_item = ComicItem(self._query_name)
+        self._root_item = RootItem(str(query_name))
 
     def index(self, row, column, parent_index=None, *args, **kwargs):
-
         if not self.hasIndex(row, column, parent_index):
             return QtCore.QModelIndex()
 
-        parent_item = None
         if not parent_index.isValid():
             parent_item = self._root_item
         else:
@@ -38,63 +34,120 @@ class ComicProcessModel(QtCore.QAbstractItemModel):
             return QtCore.QModelIndex()
 
         parent_item = child_item.get_parent()
-        if parent_item == self.rootItem:
+        if parent_item == self._root_item:
             return QtCore.QModelIndex()
-        return self.createIndex(parent_item.Row(), 0, parent_item)
+        return self.createIndex(parent_item.row(), 0, parent_item)
 
+    def rowCount(self, parent_index=QtCore.QModelIndex(), *args, **kwargs):
+        if parent_index.column() > 0:
+            return 0
 
-    def rowCount(self, index=QtCore.QModelIndex(), *args, **kwargs):
-        return len(self._comic_list)
+        if not parent_index.isValid():
+            item = self._root_item
+        else:
+            item = parent_index.internalPointer()
+        return item.get_child_count()
 
-    def columnCount(self, index=QtCore.QModelIndex(), *args, **kwargs):
-        return 2
+    def columnCount(self, parent_index=QtCore.QModelIndex(), *args, **kwargs):
+        if not parent_index.isValid():
+            return self._root_item.column_count()
+        return parent_index.internalPointer().column_count()
 
     def data(self, index, role=None):
-        row, col = index.row(), index.column()
         if not index.isValid():
             return QtCore.QVariant()
 
-        if role == QtCore.Qt.TextAlignmentRole:
-            if col == 0:
-                return QtCore.Qt.AlignVCenter
-            else:
-                return QtCore.Qt.AlignLeft
-        elif role == QtCore.Qt.DisplayRole:
-            if col == 0:
-                return QtCore.QString(str(row + 1))
-            elif col == 1:
-                return QtCore.QVariant(self._comic_list[row][0])
-        elif role == QtCore.Qt.ToolTipRole:
-            if col == 1:
-                return QtCore.QVariant(self._comic_list[row][1])
-
+        parent_item = index.internalPointer()
+        if role == QtCore.Qt.DisplayRole:
+            return parent_item.get_name()
         return QtCore.QVariant()
 
-    def headerData(self, section, orientation, role=QtCore.Qt.DisplayRole):
-        if role == QtCore.Qt.DisplayRole and orientation == QtCore.Qt.Horizontal:
-            return self._headers[section]
+    def headerData(self, column, orientation, role=QtCore.Qt.DisplayRole):
+        if (orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole):
+            try:
+                return self._root_item.column(column)
+            except IndexError:
+                pass
+        return QtCore.QVariant()
 
 class BaseItem():
 
     def __init__(self, parent):
         self._fetcher = Fetcher()
         self._parent = parent
+        self._name = None
         self._children = []
+        self._columns = []
+
+    def column_count(self):
+        return 1
+
+    def column(self, index):
+        return self._columns[index]
 
     def get_child(self, row):
         return self._children[row]
 
+    def get_children(self):
+        return self._children
+
+    def get_child_count(self):
+        if len(self._children) == 0:
+            self.load()
+        return len(self._children)
+
     def add_child(self, child):
         self._children.append(child)
 
-    def get_child_count(self):
-        return len(self._children)
-
     def get_parent(self):
-        return None
+        return self._parent
+
+    def get_name(self):
+        return self._name
+
+    def row(self):
+        if self._parent:
+            return self._parent._children.index(self)
+        return 0
+
+    def load(self):
+        pass
+
+class RootItem(BaseItem):
+
+    def __init__(self, book_name, parent = None):
+        BaseItem.__init__(self, parent)
+        self._columns = [u'名称']
+        self._book_name = book_name
+
+    def load(self):
+        for c_name, c_url in self._fetcher.queryComic(self._book_name):
+            self.add_child(ComicItem(c_name, c_url, self))
 
 class ComicItem(BaseItem):
 
-    def __init__(self, parent, book_name):
+    def __init__(self, c_name, c_url, parent):
         BaseItem.__init__(self, parent)
-        self._comic_list = self._fetcher.queryComic(book_name)
+        self._name = c_name
+        self._url = c_url
+
+    def load(self):
+        for ch_name, ch_url in self._fetcher.queryChapters(self._url):
+            self.add_child(ChapterItem(ch_name, ch_url, self))
+
+class ChapterItem(BaseItem):
+
+    def __init__(self, ch_name, ch_url, parent):
+        BaseItem.__init__(self, parent)
+        self._name = ch_name
+        self._url = ch_url
+
+    def load(self):
+        for img_url in self._fetcher.queryImages(self._url):
+            self.add_child(img_url)
+
+class ImageItem(BaseItem):
+
+    def __init__(self, url, parent):
+        BaseItem.__init__(self, parent)
+        self._url = url
