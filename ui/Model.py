@@ -57,9 +57,11 @@ class ComicProcessModel(QtCore.QAbstractItemModel):
         if not index.isValid():
             return QtCore.QVariant()
 
-        parent_item = index.internalPointer()
+        item = index.internalPointer()
         if role == QtCore.Qt.DisplayRole:
-            return parent_item.get_name()
+            return item.get_name()
+        if role == QtCore.Qt.SizeHintRole:
+            return QtCore.QSize(50,50)
         return QtCore.QVariant()
 
     def headerData(self, column, orientation, role=QtCore.Qt.DisplayRole):
@@ -129,10 +131,10 @@ class ComicItem(BaseItem):
     def __init__(self, c_name, c_url, parent):
         BaseItem.__init__(self, parent)
         self._name = c_name
-        self._url = c_url
+        self._c_url = c_url
 
     def load(self):
-        for ch_name, ch_url in self._fetcher.queryChapters(self._url):
+        for ch_name, ch_url in self._fetcher.queryChapters(self._c_url):
             self.add_child(ChapterItem(ch_name, ch_url, self))
 
 class ChapterItem(BaseItem):
@@ -140,14 +142,15 @@ class ChapterItem(BaseItem):
     def __init__(self, ch_name, ch_url, parent):
         BaseItem.__init__(self, parent)
         self._name = ch_name
-        self._url = ch_url
+        self._ch_url = ch_url
 
     def load(self):
-        for img_url in self._fetcher.queryImages(self._url):
-            self.add_child(img_url)
+        for img_url in self._fetcher.queryImages(self._ch_url):
+            self.add_child(ImageItem(img_url, self))
 
 class ImageItem(BaseItem):
 
     def __init__(self, url, parent):
         BaseItem.__init__(self, parent)
         self._url = url
+        self._name = url
