@@ -28,7 +28,7 @@ class Fetcher:
         doc = PyQuery(url = url)
         result = []
         for comic in doc('#comiclist > div > div.comiclist > ul > li > div > div.info > h3 > strong > a'):
-            result.append((re.sub(r'</?\w+[^>]*>', '', PyQuery(comic).html()), PyQuery(comic).attr("href")))
+            result.append((re.sub(r'</?\w+[^>]*>', '', PyQuery(comic).attr("title")).strip(), PyQuery(comic).attr("href")))
         return result
 
     def queryChapters(self, comicUrl):
@@ -37,7 +37,7 @@ class Fetcher:
         :return: 列表，每一项为名称链接的二元组
         '''
         doc = PyQuery(url = comicUrl)
-        return [(PyQuery(i).html(), PyQuery(i).attr("href")) for i in doc('.chapterlist_box > .cf > li > a')]
+        return [(PyQuery(i).attr("title").strip(), PyQuery(i).attr("href")) for i in doc('.chapterlist_box > .cf > li > a')]
 
     def queryImages(self, chapterUrl):
         '''
@@ -49,7 +49,7 @@ class Fetcher:
         for script in doc('script'):
             script_content = PyQuery(script).html()
             if script_content and script_content.find('image_config') > 0:
-                return [base64.decodestring(x) for x in p.findall(script_content)]
+                return [base64.decodestring(x).strip() for x in p.findall(script_content)]
 
     def urlencode(self, val):
         if isinstance(val, unicode):

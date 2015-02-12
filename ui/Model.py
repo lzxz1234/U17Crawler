@@ -62,6 +62,8 @@ class ComicProcessModel(QtCore.QAbstractItemModel):
             return item.get_name()
         if role == QtCore.Qt.SizeHintRole:
             return QtCore.QSize(50,50)
+        if role == QtCore.Qt.TextAlignmentRole:
+            return QtCore.Qt.AlignVCenter
         return QtCore.QVariant()
 
     def headerData(self, column, orientation, role=QtCore.Qt.DisplayRole):
