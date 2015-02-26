@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'F:\Workspaces\Python\U17Crawler\ui\MainWindow.ui'
 #
-# Created: Thu Feb 12 15:02:18 2015
+# Created: Thu Feb 26 18:17:23 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!

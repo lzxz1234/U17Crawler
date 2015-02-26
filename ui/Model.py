@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from PyQt4 import QtCore
-from PyQt4 import Qt
 from core.Crawler import Fetcher
 
 
@@ -10,12 +9,6 @@ class ComicProcessModel(QtCore.QAbstractItemModel):
     def __init__(self, query_name):
         super(ComicProcessModel, self).__init__()
         self._root_item = RootItem(str(query_name))
-        self.connect(self,
-                     Qt.SIGNAL("customContextMenuRequested(QPoint)"),
-                     self.rightClick)
-
-    def rightClick(self, point):
-        print(point)
 
     def index(self, row, column, parent_index=None, *args, **kwargs):
         if not self.hasIndex(row, column, parent_index):
