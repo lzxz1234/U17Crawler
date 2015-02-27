@@ -9,7 +9,10 @@ class Generator:
         (w, h) = A4
         c = canvas.Canvas(out, pagesize = A4)
         for image in files:
-            url = image.get_name()
-            c.drawImage(url, 0, 0, w, h)
-            c.showPage()
+            try:
+                url = image.get_name()
+                c.drawImage(url, 0, 0, w, h)
+                c.showPage()
+            except:
+                continue
         c.save()
