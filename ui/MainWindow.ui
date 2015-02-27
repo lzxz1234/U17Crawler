@@ -33,7 +33,7 @@
      </widget>
     </item>
     <item row="1" column="0" colspan="3">
-     <widget class="QTreeView" name="treeView"/>
+     <widget class="ComicListView" name="treeView"/>
     </item>
    </layout>
   </widget>
@@ -73,6 +73,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ComicListView</class>
+   <extends>QTreeView</extends>
+   <header>ComicListView</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

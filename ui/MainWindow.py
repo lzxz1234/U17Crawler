@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'F:\Workspaces\Python\U17Crawler\ui\MainWindow.ui'
 #
-# Created: Thu Feb 26 18:17:23 2015
+# Created: Fri Feb 27 10:59:41 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -40,7 +40,7 @@ class Ui_MainWindow(object):
         self.button_reset = QtGui.QPushButton(self.centralwidget)
         self.button_reset.setObjectName(_fromUtf8("button_reset"))
         self.gridLayout.addWidget(self.button_reset, 0, 2, 1, 1)
-        self.treeView = QtGui.QTreeView(self.centralwidget)
+        self.treeView = ComicListView(self.centralwidget)
         self.treeView.setObjectName(_fromUtf8("treeView"))
         self.gridLayout.addWidget(self.treeView, 1, 0, 1, 3)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -76,3 +76,4 @@ class Ui_MainWindow(object):
         self.action_exit.setText(_translate("MainWindow", "退出", None))
         self.action_lzxz1234.setText(_translate("MainWindow", "lzxz1234", None))
 
+from ComicListView import ComicListView
