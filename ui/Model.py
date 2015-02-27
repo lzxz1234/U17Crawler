@@ -61,7 +61,7 @@ class ComicProcessModel(QtCore.QAbstractItemModel):
         if role == QtCore.Qt.DisplayRole:
             return item.get_name()
         if role == QtCore.Qt.SizeHintRole:
-            return QtCore.QSize(50,50)
+            return QtCore.QSize(20,20)
         if role == QtCore.Qt.TextAlignmentRole:
             return QtCore.Qt.AlignVCenter
         return QtCore.QVariant()
