@@ -27,9 +27,9 @@ class ComicListView(QtGui.QTreeView):
         if isinstance(self.current_item, ComicItem):
             self.export_comic(self.current_item)
         elif isinstance(self.current_item, ChapterItem):
-            self.export_chapter((self.current_item, ))
+            self.export_chapters((self.current_item, ))
         elif isinstance(self.current_item, ImageItem):
-            self.export_image((self.current_item, ))
+            self.export_images((self.current_item, ))
 
     def export_comic(self, comic):
         self.export_chapters(comic.get_children())
