@@ -6,7 +6,6 @@ from ui.MainWindow import Ui_MainWindow
 from ui.Model import ComicProcessModel
 from PyQt4 import QtGui
 from PyQt4 import Qt
-from PyQt4 import QtCore
 
 reload(sys)
 sys.setdefaultencoding('utf8')

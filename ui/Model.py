@@ -93,12 +93,12 @@ class BaseItem():
         return self._children[row]
 
     def get_children(self):
+        if len(self._children) == 0:
+            self.load()
         return self._children
 
     def get_child_count(self):
-        if len(self._children) == 0:
-            self.load()
-        return len(self._children)
+        return len(self.get_children())
 
     def add_child(self, child):
         self._children.append(child)

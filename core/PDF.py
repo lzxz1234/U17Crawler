@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4, landscape
 
 class Generator:
 
     def gen_from_files(self, out, files):
-        c = canvas.Canvas(out)
-        for x in files:
-            c.drawImage(x, 0, 0)
-        c.showPage()
+        (w, h) = A4
+        c = canvas.Canvas(out, pagesize = A4)
+        for image in files:
+            url = image.get_name()
+            c.drawImage(url, 0, 0, w, h)
+            c.showPage()
         c.save()
