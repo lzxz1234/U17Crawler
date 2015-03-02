@@ -2,12 +2,14 @@
 
 from PyQt4 import QtGui, QtCore, Qt
 from ui.Model import ComicItem, ChapterItem, ImageItem
+from util.ThreadPool import ThreadPool
 from core.PDF import Generator
 
 class ComicListView(QtGui.QTreeView):
 
     def __init__(self, parent = None):
         super(ComicListView, self).__init__(parent)
+        self.thread_pool = ThreadPool(1)
         self.contextMenu = QtGui.QMenu(self)
         self.c_menu_export = self.contextMenu.addAction(u'导出')
         self.c_menu_export.connect(self.c_menu_export,
@@ -43,4 +45,4 @@ class ComicListView(QtGui.QTreeView):
     def export_images(self, images):
         dialog = QtGui.QFileDialog()
         save_path = unicode(dialog.getSaveFileName())
-        Generator().gen_from_files(save_path, images)
+        self.thread_pool.add_task(lambda: Generator().gen_from_files(save_path, images))
